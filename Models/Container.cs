@@ -5,6 +5,6 @@ namespace Azuredotnetblobproject.Models
     public class Container
     {
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 }
