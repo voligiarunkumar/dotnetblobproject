@@ -51,9 +51,12 @@ namespace Azuredotnetblobproject.Services
 
             };
             IDictionary<string,string>metadata=new Dictionary<string,string>();
-            metadata.Add("title",blob.Title); 
-            metadata.Add("comment",blob.Comment);
+            // deleting metadata where key having like title.
+            metadata.Add("title", blob.Title);
+            metadata["comment"]=blob.Comment;
             var result = await blobClient.UploadAsync(file.OpenReadStream(), httpheaders,metadata);
+            metadata.Remove("title");
+            await blobClient.SetMetadataAsync(metadata);
             if(result!=null)
             {
                 return true;
