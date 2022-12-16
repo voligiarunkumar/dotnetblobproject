@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azuredotnetblobproject.Models;
 
 namespace Azuredotnetblobproject.Services
 {
@@ -13,7 +14,10 @@ namespace Azuredotnetblobproject.Services
         }
         public Task DeleteBlob(string name, string containerName)
         {
-            throw new NotImplementedException();
+            BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
+            var blobClient = blobContainerClient.DeleteBlobIfExists(name);
+            return Task.FromResult(0);
+
         }
 
         public async Task<List<string>> GetAllBlobs(string containerName)
@@ -37,7 +41,7 @@ namespace Azuredotnetblobproject.Services
 
         }
 
-        public async Task<bool> UploadBlob(string name, IFormFile file, string containerName)
+        public async Task<bool> UploadBlob(string name, IFormFile file, string containerName,Blob blob)
         {
             BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
             var blobClient = blobContainerClient.GetBlobClient(name);
@@ -46,7 +50,10 @@ namespace Azuredotnetblobproject.Services
                ContentType =file.ContentType
 
             };
-            var result = await blobClient.UploadAsync(file.OpenReadStream(), httpheaders);
+            IDictionary<string,string>metadata=new Dictionary<string,string>();
+            metadata.Add("title",blob.Title); 
+            metadata.Add("comment",blob.Comment);
+            var result = await blobClient.UploadAsync(file.OpenReadStream(), httpheaders,metadata);
             if(result!=null)
             {
                 return true;

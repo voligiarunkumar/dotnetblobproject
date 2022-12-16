@@ -1,4 +1,5 @@
-﻿using Azuredotnetblobproject.Services;
+﻿using Azuredotnetblobproject.Models;
+using Azuredotnetblobproject.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Azuredotnetblobproject.Controllers
@@ -18,18 +19,18 @@ namespace Azuredotnetblobproject.Controllers
             return View(blobsobj);
         }
         [HttpGet]
-        public async Task<IActionResult> AddFile(string containerName)
+        public async Task<IActionResult> AddFile(string containerName,Blob blob)
         {
              
             return View();
         }
         [HttpPost]
-        public  async Task <IActionResult> AddFile(string containerName,IFormFile file)
+        public  async Task <IActionResult> AddFile(string containerName,IFormFile file,Blob blob)
         {
             //here we are using Guid for overiding the file *if some has it already
             if(file==null||file.Length<1)return View();
             var fileName=Path.GetFileNameWithoutExtension(file.FileName)+"_"+Guid.NewGuid()+Path.GetExtension(file.FileName);
-            var result = await blobService.UploadBlob(fileName, file, containerName);
+            var result = await blobService.UploadBlob(fileName, file, containerName,blob);
             if(result)
                 return RedirectToAction("Index","Container");
              
